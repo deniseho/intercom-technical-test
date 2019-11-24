@@ -2,16 +2,12 @@
 
 const http = require('http');
 
+const config = require('./config');
+
 const Customer = require('./src/models/Customer');
 
 const getDistance = require('./src/services/distantCalculator');
 const generateOutput = require('./src/services/outputGenerator');
-
-const options = {
-  host: 's3.amazonaws.com',
-  path: '/intercom-take-home-test/customers.txt',
-  method: 'GET',
-};
 
 const distanceScope = 100; //km 
 const intercomPos = { x: 53.339428, y: -6.257664 };
@@ -19,7 +15,7 @@ const intercomPos = { x: 53.339428, y: -6.257664 };
 let customerList = [];
 let customersFiltered = [];
 
-let request = http.request(options, (res) => {
+let request = http.request(config.options, (res) => {
   let data = '';
 
   res.on('data', (chunk) => {
