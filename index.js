@@ -12,46 +12,55 @@ const generateOutput = require('./src/services/outputGenerator');
 const distanceScope = 100; //km 
 const intercomPos = { x: 53.339428, y: -6.257664 };
 
-let customerList = [];
-let customersFiltered = [];
 
-let request = http.request(config.options, (res) => {
-  let data = '';
-
-  res.on('data', (chunk) => {
-    //Retrieve full customer list
-    data += chunk;
-    let index = data.indexOf('\n');
-
-    while (index > -1) {
-      let line = data.substring(0, index);
-      data = data.substring(index + 1);
-      index = data.indexOf('\n');
-      addCustomerToList(line);
-    }
+// 1. Read full customer list
+// 2. Filter and store those who within 100 km
+// 3. Generate output.txt to display the result
+getCustomerList()
+  .then((customerList) => {
+    return customerList.filter(filterListByDist);
+  }).then((filteredList) => {
+    generateOutput(sortByIdAsc(filteredList));
   });
 
-  res.on('end', () => {
-    //Filter and store those who within 100 km
-    customersFiltered = customerList.filter(filterListByDist);
 
-    //Generate output.txt to display the result
-    generateOutput(sortByIdAsc(customersFiltered));
+function getCustomerList() {
+  let customerList = [];
+
+  return new Promise(function (resolve, reject) {
+    let request = http.request(config.options, (res) => {
+      let data = '';
+
+      res.on('data', (chunk) => {
+        data += chunk;
+        let index = data.indexOf('\n');
+
+        while (index > -1) {
+          let line = data.substring(0, index);
+          data = data.substring(index + 1);
+          index = data.indexOf('\n');
+          addCustomerToList(line);
+        }
+      }).on('end', () => {
+        console.log("Finished reading customer list");
+        resolve(customerList);
+      });
+    });
+
+    request.on('error', (e) => {
+      reject(Error("Request Error: " + e.message));
+    });
+
+    request.end();
   });
-});
 
-request.on('error', (e) => {
-  console.log(e.message);
-});
-
-request.end();
-
-
-function addCustomerToList(data) {
-  let customer = new Customer(JSON.parse(data));
-  customer.distance = checkDistance(intercomPos, customer);
-  customerList.push(customer);
+  function addCustomerToList(data) {
+    let customer = new Customer(JSON.parse(data));
+    customer.distance = checkDistance(intercomPos, customer);
+    customerList.push(customer);
+  }
 }
+
 
 function filterListByDist(data) {
   return data.distance <= distanceScope;
