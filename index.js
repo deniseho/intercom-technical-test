@@ -61,6 +61,12 @@ function getCustomerList() {
   }
 }
 
+function checkDistance(start, end) {
+  let startPos = start ? intercomPos : { x: start.x, y: start.y };
+  let endPos = { x: end.x, y: end.y };
+
+  return getDistance(startPos, endPos);
+}
 
 function filterListByDist(data) {
   return data.distance <= distanceScope;
@@ -70,9 +76,3 @@ function sortByIdAsc(list) {
   return list.sort((a, b) => { return a.id - b.id });
 }
 
-function checkDistance(start, end) {
-  let startPos = start ? intercomPos : { x: start.x, y: start.y };
-  let endPos = { x: end.x, y: end.y };
-
-  return getDistance(startPos, endPos);
-}
