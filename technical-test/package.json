@@ -1,0 +1,16 @@
+{
+  "name": "intercom-project",
+  "version": "1.0.0",
+  "description": "100 km customers invitation",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "author": "Chia Ying Ho",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "6.2.2",
+    "should": "13.2.3"
+  }
+}
