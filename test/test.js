@@ -36,7 +36,7 @@ describe('Get customer distance tests', () => {
 
 })
 
-describe('Check customer distance tests', () => {
+describe('Check customer validility by the distance tests', () => {
 
   it('Should return true if the position of the customer is within 100km', done => {
     let customer = new Customer({"latitude": "53", "user_id": 100, "name": "Chia Ying Ho", "longitude": "-6"});
